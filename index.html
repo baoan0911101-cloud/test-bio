@@ -312,14 +312,16 @@
     transition: transform 0.6s var(--ease);
   }
 
-  .entry-btn:hover {
+  .entry-btn:hover,
+  .entry-btn:active {
     transform: translateY(-3px);
     box-shadow:
       0 20px 40px -6px rgba(37, 99, 235, 0.6),
       inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
 
-  .entry-btn:hover::before {
+  .entry-btn:hover::before,
+  .entry-btn:active::before {
     transform: translateX(100%);
   }
 
@@ -380,7 +382,8 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
-  .music-player:hover {
+  .music-player:hover,
+  .music-player:active {
     box-shadow:
       0 1px 3px rgba(15, 23, 42, 0.04),
       0 18px 44px -8px rgba(37, 99, 235, 0.22),
@@ -956,12 +959,14 @@
   }
 
   .link:hover::before,
-  .link:active::before {
+  .link:active::before,
+  .link.touch-hover::before {
     opacity: 1;
   }
 
   .link:hover,
-  .link:active {
+  .link:active,
+  .link.touch-hover {
     transform: translateY(-3px);
     box-shadow:
       0 14px 28px -8px rgba(15, 23, 42, 0.15),
@@ -995,12 +1000,14 @@
   }
 
   .link:hover .link-icon,
-  .link:active .link-icon {
+  .link:active .link-icon,
+  .link.touch-hover .link-icon {
     transform: scale(1.1) rotate(-5deg);
   }
 
   .link:hover .link-icon::before,
-  .link:active .link-icon::before {
+  .link:active .link-icon::before,
+  .link.touch-hover .link-icon::before {
     transform: translateX(100%);
   }
 
@@ -1045,7 +1052,8 @@
   }
 
   .link:hover .link-name,
-  .link:active .link-name {
+  .link:active .link-name,
+  .link.touch-hover .link-name {
     color: var(--blue);
   }
 
@@ -1080,13 +1088,13 @@
   }
 
   .link:hover .link-arrow,
-  .link:active .link-arrow {
+  .link:active .link-arrow,
+  .link.touch-hover .link-arrow {
     color: var(--blue);
     background: var(--blue-soft);
     transform: translateX(4px);
   }
 
-  /* Ripple effect (dùng cho cả click chuột và chạm) */
   .ripple {
     position: absolute;
     border-radius: 50%;
@@ -1238,38 +1246,6 @@
     .entry-desc { font-size: 13.5px; }
     .entry-btn { padding: 15px 20px; font-size: 14px; }
     .entry-hint { font-size: 11px; }
-  }
-
-  /* Tắt hover trên thiết bị cảm ứng để tránh bị "dính" trạng thái hover */
-  @media (hover: none) {
-    .card:hover,
-    .stat:hover,
-    .link:hover,
-    .skill:hover,
-    .disc:hover,
-    .play-btn:hover,
-    .music-player:hover,
-    .avatar:hover .avatar-inner,
-    .role:hover,
-    .entry-btn:hover {
-      transform: none;
-      box-shadow: initial;
-    }
-    .card:hover { box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 12px 32px -8px rgba(15, 23, 42, 0.08); }
-    .link:hover { box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 2px 6px -2px rgba(15, 23, 42, 0.04); }
-    .link:hover::before { opacity: 0; }
-    .link:hover .link-icon { transform: none; }
-    .link:hover .link-icon::before { transform: translateX(-100%); }
-    .link:hover .link-name { color: var(--ink); }
-    .link:hover .link-arrow { color: var(--ink-4); background: transparent; transform: none; }
-    .stat:hover { box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 2px 6px -2px rgba(15, 23, 42, 0.04); border-color: var(--line); }
-    .stat:hover::before { transform: scaleX(0); }
-    .stat:hover .stat-value { color: var(--ink); }
-    .skill:hover { color: var(--ink-2); border-color: var(--line); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 1px 3px -1px rgba(15, 23, 42, 0.04); }
-    .skill:hover::before { opacity: 0; }
-    .disc:hover { transform: none; }
-    .play-btn:hover { transform: none; }
-    .music-player:hover { transform: none; }
   }
 
   ::selection { background: var(--blue); color: #ffffff; }
@@ -1592,7 +1568,6 @@
       }
     }
 
-    // Nút "Vào trang" — hỗ trợ cả click và touch
     entryBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       enterAndPlay();
@@ -1603,7 +1578,6 @@
       enterAndPlay();
     }, { passive: false });
 
-    // Overlay cũng có thể bấm để vào
     entry.addEventListener('click', enterAndPlay);
     entry.addEventListener('touchend', (e) => {
       if (e.target === entryBtn || entryBtn.contains(e.target)) return;
@@ -1631,7 +1605,6 @@
       }
     }
 
-    // Play button + disc — click + touch
     playBtn.addEventListener('click', togglePlay);
     disc.addEventListener('click', togglePlay);
     playBtn.addEventListener('touchend', (e) => {
@@ -1670,12 +1643,10 @@
     }
 
     document.querySelectorAll('.link').forEach(function (el) {
-      // Chuột
       el.addEventListener('pointerdown', function (e) {
-        if (e.pointerType === 'touch') return; // tránh double
+        if (e.pointerType === 'touch') return;
         spawnRipple(el, e.clientX, e.clientY);
       });
-      // Chạm
       el.addEventListener('touchstart', function (e) {
         const t = e.touches[0];
         if (t) spawnRipple(el, t.clientX, t.clientY);
@@ -1684,61 +1655,46 @@
   })();
 
   /* =========================================================
-     TILT 3D + GLOW THEO NGÓN TAY TRÊN MOBILE
+     MOBILE TOUCH-HOVER — NÚT NỔI LÊN KHI DI TAY TỚI
+     (Vì trên mobile không có "hover" thật, ta tự giả lập)
   ========================================================= */
   (function () {
-    const card = document.querySelector('.card');
-    if (!card) return;
+    if (!IS_TOUCH) return;
 
-    let raf = null;
-    let targetRX = 0, targetRY = 0, curRX = 0, curRY = 0;
+    const hoverables = document.querySelectorAll('.link, .stat, .skill, .role');
 
-    function loop() {
-      curRX += (targetRX - curRX) * 0.15;
-      curRY += (targetRY - curRY) * 0.15;
-      card.style.transform =
-        'perspective(1000px) rotateX(' + curRX.toFixed(2) + 'deg) rotateY(' + curRY.toFixed(2) + 'deg)';
-      if (Math.abs(targetRX - curRX) > 0.05 || Math.abs(targetRY - curRY) > 0.05) {
-        raf = requestAnimationFrame(loop);
-      } else {
-        raf = null;
-      }
+    function clearAll() {
+      hoverables.forEach(function (el) { el.classList.remove('touch-hover'); });
     }
 
-    function applyTilt(clientX, clientY) {
-      const r = card.getBoundingClientRect();
-      const px = (clientX - r.left) / r.width;
-      const py = (clientY - r.top) / r.height;
-      targetRY = (px - 0.5) * 8;
-      targetRX = -(py - 0.5) * 8;
-      if (!raf) raf = requestAnimationFrame(loop);
-    }
-
-    function resetTilt() {
-      targetRX = 0;
-      targetRY = 0;
-      if (!raf) raf = requestAnimationFrame(loop);
-    }
-
-    // Chuột
-    card.addEventListener('mousemove', function (e) {
-      if (IS_TOUCH) return;
-      applyTilt(e.clientX, e.clientY);
-    });
-    card.addEventListener('mouseleave', function () {
-      if (IS_TOUCH) return;
-      resetTilt();
-    });
-
-    // Ngón tay — kéo trên card
-    card.addEventListener('touchmove', function (e) {
+    // Khi ngón tay di chuyển → tìm element dưới ngón tay → bật class
+    document.addEventListener('touchmove', function (e) {
       const t = e.touches[0];
       if (!t) return;
-      applyTilt(t.clientX, t.clientY);
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      if (!el) { clearAll(); return; }
+
+      // Tìm element hoverable gần nhất
+      let target = null;
+      hoverables.forEach(function (h) {
+        if (h === el || h.contains(el)) target = h;
+      });
+
+      if (target) {
+        hoverables.forEach(function (h) {
+          if (h !== target) h.classList.remove('touch-hover');
+        });
+        target.classList.add('touch-hover');
+      } else {
+        clearAll();
+      }
     }, { passive: true });
 
-    card.addEventListener('touchend', resetTilt);
-    card.addEventListener('touchcancel', resetTilt);
+    // Nhấc tay → xóa hết
+    document.addEventListener('touchend', function () {
+      setTimeout(clearAll, 250);
+    });
+    document.addEventListener('touchcancel', clearAll);
   })();
 
   /* =========================================================
