@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>KaiVietsub — Kênh Vietsub & Gaming</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,6 +34,7 @@
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -47,6 +48,7 @@
     padding: 48px 20px 64px;
     position: relative;
     overflow-x: hidden;
+    touch-action: manipulation;
   }
 
   /* =========================================================
@@ -297,6 +299,8 @@
     position: relative;
     overflow: hidden;
     z-index: 1;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .entry-btn::before {
@@ -397,6 +401,8 @@
     flex-shrink: 0;
     cursor: pointer;
     transition: transform 0.3s var(--ease);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .disc::before {
@@ -424,6 +430,7 @@
   }
 
   .disc:hover { transform: scale(1.08); }
+  .disc:active { transform: scale(0.92); }
   .disc.playing { animation: spinDisc 4s linear infinite; }
 
   @keyframes spinDisc {
@@ -476,6 +483,8 @@
     box-shadow:
       0 6px 14px -2px rgba(37, 99, 235, 0.5),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .play-btn:hover {
@@ -486,7 +495,7 @@
   }
 
   .play-btn:active {
-    transform: scale(0.96);
+    transform: scale(0.92);
   }
 
   .play-btn svg {
@@ -523,13 +532,14 @@
     border-radius: 3px;
     outline: none;
     cursor: pointer;
+    touch-action: manipulation;
   }
 
   .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: var(--blue);
     cursor: pointer;
@@ -540,8 +550,8 @@
   .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.25); }
 
   .volume-slider::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: var(--blue);
     cursor: pointer;
@@ -577,7 +587,8 @@
     position: relative;
     overflow: hidden;
     margin-bottom: 14px;
-    transition: box-shadow 0.4s var(--ease);
+    transition: box-shadow 0.4s var(--ease), transform 0.5s var(--ease-out);
+    transform-style: preserve-3d;
   }
 
   .card:hover {
@@ -649,7 +660,8 @@
     display: block;
   }
 
-  .avatar:hover .avatar-inner {
+  .avatar:hover .avatar-inner,
+  .avatar:active .avatar-inner {
     transform: scale(1.06) rotate(-3deg);
     box-shadow:
       0 20px 48px -10px rgba(220, 38, 38, 0.4),
@@ -762,7 +774,8 @@
     transition: all 0.3s var(--ease);
   }
 
-  .role:hover {
+  .role:hover,
+  .role:active {
     background: rgba(37, 99, 235, 0.1);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
@@ -860,11 +873,13 @@
     transition: transform 0.4s var(--ease);
   }
 
-  .stat:hover::before {
+  .stat:hover::before,
+  .stat:active::before {
     transform: scaleX(1);
   }
 
-  .stat:hover {
+  .stat:hover,
+  .stat:active {
     transform: translateY(-4px);
     border-color: rgba(37, 99, 235, 0.3);
     box-shadow:
@@ -884,7 +899,8 @@
     transition: color 0.3s var(--ease);
   }
 
-  .stat:hover .stat-value { color: var(--blue); }
+  .stat:hover .stat-value,
+  .stat:active .stat-value { color: var(--blue); }
 
   .stat-label {
     font-family: var(--mono);
@@ -920,6 +936,8 @@
       0 2px 6px -2px rgba(15, 23, 42, 0.04);
     position: relative;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .link::before {
@@ -937,11 +955,13 @@
     pointer-events: none;
   }
 
-  .link:hover::before {
+  .link:hover::before,
+  .link:active::before {
     opacity: 1;
   }
 
-  .link:hover {
+  .link:hover,
+  .link:active {
     transform: translateY(-3px);
     box-shadow:
       0 14px 28px -8px rgba(15, 23, 42, 0.15),
@@ -974,11 +994,13 @@
     transition: transform 0.6s var(--ease);
   }
 
-  .link:hover .link-icon {
+  .link:hover .link-icon,
+  .link:active .link-icon {
     transform: scale(1.1) rotate(-5deg);
   }
 
-  .link:hover .link-icon::before {
+  .link:hover .link-icon::before,
+  .link:active .link-icon::before {
     transform: translateX(100%);
   }
 
@@ -1022,7 +1044,8 @@
     transition: color 0.3s var(--ease);
   }
 
-  .link:hover .link-name {
+  .link:hover .link-name,
+  .link:active .link-name {
     color: var(--blue);
   }
 
@@ -1056,10 +1079,27 @@
     stroke-linejoin: round;
   }
 
-  .link:hover .link-arrow {
+  .link:hover .link-arrow,
+  .link:active .link-arrow {
     color: var(--blue);
     background: var(--blue-soft);
     transform: translateX(4px);
+  }
+
+  /* Ripple effect (dùng cho cả click chuột và chạm) */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.35), rgba(124, 58, 237, 0.15) 50%, transparent 70%);
+    transform: scale(0);
+    opacity: 1;
+    animation: rippleAnim 0.7s var(--ease-out) forwards;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes rippleAnim {
+    to { transform: scale(1); opacity: 0; }
   }
 
   /* =========================================================
@@ -1090,6 +1130,7 @@
       0 1px 3px -1px rgba(15, 23, 42, 0.04);
     position: relative;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .skill::before {
@@ -1101,7 +1142,8 @@
     transition: opacity 0.3s var(--ease);
   }
 
-  .skill:hover {
+  .skill:hover,
+  .skill:active {
     color: var(--blue);
     border-color: rgba(37, 99, 235, 0.3);
     transform: translateY(-2px);
@@ -1110,7 +1152,8 @@
       0 2px 4px -2px rgba(37, 99, 235, 0.1);
   }
 
-  .skill:hover::before {
+  .skill:hover::before,
+  .skill:active::before {
     opacity: 1;
   }
 
@@ -1156,7 +1199,8 @@
       justify-content: flex-start;
     }
     .volume-wrap { margin-left: auto; }
-    .volume-slider { width: 50px; }
+    .volume-slider { width: 70px; }
+    .volume-slider::-webkit-slider-thumb { width: 18px; height: 18px; }
   }
 
   @media (max-width: 480px) {
@@ -1194,6 +1238,38 @@
     .entry-desc { font-size: 13.5px; }
     .entry-btn { padding: 15px 20px; font-size: 14px; }
     .entry-hint { font-size: 11px; }
+  }
+
+  /* Tắt hover trên thiết bị cảm ứng để tránh bị "dính" trạng thái hover */
+  @media (hover: none) {
+    .card:hover,
+    .stat:hover,
+    .link:hover,
+    .skill:hover,
+    .disc:hover,
+    .play-btn:hover,
+    .music-player:hover,
+    .avatar:hover .avatar-inner,
+    .role:hover,
+    .entry-btn:hover {
+      transform: none;
+      box-shadow: initial;
+    }
+    .card:hover { box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 12px 32px -8px rgba(15, 23, 42, 0.08); }
+    .link:hover { box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 2px 6px -2px rgba(15, 23, 42, 0.04); }
+    .link:hover::before { opacity: 0; }
+    .link:hover .link-icon { transform: none; }
+    .link:hover .link-icon::before { transform: translateX(-100%); }
+    .link:hover .link-name { color: var(--ink); }
+    .link:hover .link-arrow { color: var(--ink-4); background: transparent; transform: none; }
+    .stat:hover { box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 2px 6px -2px rgba(15, 23, 42, 0.04); border-color: var(--line); }
+    .stat:hover::before { transform: scaleX(0); }
+    .stat:hover .stat-value { color: var(--ink); }
+    .skill:hover { color: var(--ink-2); border-color: var(--line); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 1px 3px -1px rgba(15, 23, 42, 0.04); }
+    .skill:hover::before { opacity: 0; }
+    .disc:hover { transform: none; }
+    .play-btn:hover { transform: none; }
+    .music-player:hover { transform: none; }
   }
 
   ::selection { background: var(--blue); color: #ffffff; }
@@ -1288,7 +1364,7 @@
       </span>
     </h1>
 
-    <div class="handle">@kaireviewphim</div>
+    <div class="handle">@kaivietsub</div>
     <div class="role">Kênh Vietsub &amp; Gaming</div>
   </div>
 
@@ -1303,15 +1379,15 @@
     </div>
     <div class="stat">
       <span class="stat-value" data-count="1500">0</span>
-      <span class="stat-label">Các tập</span>
+      <span class="stat-label">Episodes</span>
     </div>
     <div class="stat">
       <span class="stat-value" data-count="50">0</span>
-      <span class="stat-label">Các dự án</span>
+      <span class="stat-label">Projects</span>
     </div>
     <div class="stat">
       <span class="stat-value" data-count="999">0</span>
-      <span class="stat-label">Theo dõi</span>
+      <span class="stat-label">Followers</span>
     </div>
   </div>
 
@@ -1371,7 +1447,7 @@
       </div>
       <div class="link-body">
         <span class="link-name">Email</span>
-        <span class="link-desc">Hợp tác &amp; quảng cáo (Chưa Có)</span>
+        <span class="link-desc">Hợp tác &amp; quảng cáo</span>
       </div>
       <div class="link-arrow">
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -1387,21 +1463,25 @@
     <span class="skill"><span>Photoshop</span></span>
     <span class="skill"><span>Premiere Pro</span></span>
     <span class="skill"><span>After Effects</span></span>
-    <span class="skill"><span>Chinese HSK 3</span></span>
-    <span class="skill"><span>Gemini AI</span></span>
+    <span class="skill"><span>Japanese N3</span></span>
   </div>
 
   <div class="footer">
-    <span>© Made with care</span>
+    <span>Made with care</span>
     <span class="sep"></span>
     <span>Vietnam</span>
     <span class="sep"></span>
-    <span>2026</span>
+    <span>2025</span>
   </div>
 
 </div>
 
 <script>
+  /* =========================================================
+     0. HELPERS
+  ========================================================= */
+  const IS_TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
   /* =========================================================
      STATS COUNT UP — CHỈ CHẠY SAU KHI BẤM "VÀO TRANG"
   ========================================================= */
@@ -1438,12 +1518,10 @@
       });
     }
 
-    // Chờ cho đến khi overlay entry được ẩn (tức đã bấm "Vào trang")
     const checkEntry = setInterval(function () {
       const entry = document.getElementById('entry');
       if (entry && entry.classList.contains('hidden')) {
         clearInterval(checkEntry);
-        // Đợi 1 chút cho animation mượt rồi mới đếm
         setTimeout(run, 500);
       }
     }, 100);
@@ -1488,6 +1566,7 @@
     }
 
     function enterAndPlay() {
+      if (entry.classList.contains('hidden')) return;
       entry.classList.add('hidden');
 
       audio.muted = false;
@@ -1507,17 +1586,30 @@
               audio.muted = false;
               fadeVolume(0, 0.6, 800);
             }, 100);
+            updateUI(true);
           }).catch(() => {});
         });
       }
     }
 
+    // Nút "Vào trang" — hỗ trợ cả click và touch
     entryBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       enterAndPlay();
     });
+    entryBtn.addEventListener('touchend', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      enterAndPlay();
+    }, { passive: false });
 
+    // Overlay cũng có thể bấm để vào
     entry.addEventListener('click', enterAndPlay);
+    entry.addEventListener('touchend', (e) => {
+      if (e.target === entryBtn || entryBtn.contains(e.target)) return;
+      e.preventDefault();
+      enterAndPlay();
+    }, { passive: false });
 
     document.addEventListener('keydown', (e) => {
       if (!entry.classList.contains('hidden') && (e.key === 'Enter' || e.key === ' ')) {
@@ -1539,8 +1631,17 @@
       }
     }
 
+    // Play button + disc — click + touch
     playBtn.addEventListener('click', togglePlay);
     disc.addEventListener('click', togglePlay);
+    playBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      togglePlay();
+    }, { passive: false });
+    disc.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      togglePlay();
+    }, { passive: false });
 
     volumeSlider.addEventListener('input', (e) => {
       audio.muted = false;
@@ -1549,6 +1650,109 @@
 
     audio.addEventListener('play', () => updateUI(true));
     audio.addEventListener('pause', () => updateUI(false));
+  })();
+
+  /* =========================================================
+     RIPPLE — CLICK + TOUCH
+  ========================================================= */
+  (function () {
+    function spawnRipple(el, clientX, clientY) {
+      const r = el.getBoundingClientRect();
+      const size = Math.max(r.width, r.height) * 2.2;
+      const s = document.createElement('span');
+      s.className = 'ripple';
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = (clientX - r.left - size / 2) + 'px';
+      s.style.top = (clientY - r.top - size / 2) + 'px';
+      el.appendChild(s);
+      setTimeout(function () { s.remove(); }, 750);
+    }
+
+    document.querySelectorAll('.link').forEach(function (el) {
+      // Chuột
+      el.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'touch') return; // tránh double
+        spawnRipple(el, e.clientX, e.clientY);
+      });
+      // Chạm
+      el.addEventListener('touchstart', function (e) {
+        const t = e.touches[0];
+        if (t) spawnRipple(el, t.clientX, t.clientY);
+      }, { passive: true });
+    });
+  })();
+
+  /* =========================================================
+     TILT 3D + GLOW THEO NGÓN TAY TRÊN MOBILE
+  ========================================================= */
+  (function () {
+    const card = document.querySelector('.card');
+    if (!card) return;
+
+    let raf = null;
+    let targetRX = 0, targetRY = 0, curRX = 0, curRY = 0;
+
+    function loop() {
+      curRX += (targetRX - curRX) * 0.15;
+      curRY += (targetRY - curRY) * 0.15;
+      card.style.transform =
+        'perspective(1000px) rotateX(' + curRX.toFixed(2) + 'deg) rotateY(' + curRY.toFixed(2) + 'deg)';
+      if (Math.abs(targetRX - curRX) > 0.05 || Math.abs(targetRY - curRY) > 0.05) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        raf = null;
+      }
+    }
+
+    function applyTilt(clientX, clientY) {
+      const r = card.getBoundingClientRect();
+      const px = (clientX - r.left) / r.width;
+      const py = (clientY - r.top) / r.height;
+      targetRY = (px - 0.5) * 8;
+      targetRX = -(py - 0.5) * 8;
+      if (!raf) raf = requestAnimationFrame(loop);
+    }
+
+    function resetTilt() {
+      targetRX = 0;
+      targetRY = 0;
+      if (!raf) raf = requestAnimationFrame(loop);
+    }
+
+    // Chuột
+    card.addEventListener('mousemove', function (e) {
+      if (IS_TOUCH) return;
+      applyTilt(e.clientX, e.clientY);
+    });
+    card.addEventListener('mouseleave', function () {
+      if (IS_TOUCH) return;
+      resetTilt();
+    });
+
+    // Ngón tay — kéo trên card
+    card.addEventListener('touchmove', function (e) {
+      const t = e.touches[0];
+      if (!t) return;
+      applyTilt(t.clientX, t.clientY);
+    }, { passive: true });
+
+    card.addEventListener('touchend', resetTilt);
+    card.addEventListener('touchcancel', resetTilt);
+  })();
+
+  /* =========================================================
+     NGĂN ZOOM DOUBLE-TAP TRÊN iOS
+  ========================================================= */
+  (function () {
+    let lastTouch = 0;
+    document.addEventListener('touchend', function (e) {
+      const now = Date.now();
+      if (now - lastTouch <= 300) {
+        e.preventDefault();
+      }
+      lastTouch = now;
+    }, { passive: false });
   })();
 </script>
 
