@@ -64,7 +64,6 @@
     pointer-events: none;
   }
 
-  /* Fine grid — rất mờ */
   body::after {
     content: '';
     position: fixed;
@@ -118,7 +117,6 @@
     overflow: hidden;
   }
 
-  /* Gradient border — animate */
   .entry-card::before {
     content: '';
     position: absolute;
@@ -135,7 +133,6 @@
     to { background-position: 300% 0; }
   }
 
-  /* Radial glow bên trong */
   .entry-card::after {
     content: '';
     position: absolute;
@@ -180,7 +177,6 @@
     overflow: hidden;
   }
 
-  /* Shine effect */
   .entry-icon-inner::before {
     content: '';
     position: absolute;
@@ -590,7 +586,6 @@
       0 20px 44px -8px rgba(15, 23, 42, 0.12);
   }
 
-  /* Gradient border top — animate */
   .card::before {
     content: '';
     position: absolute;
@@ -603,7 +598,6 @@
     animation: gradientFlow 5s linear infinite;
   }
 
-  /* Radial glow */
   .card::after {
     content: '';
     position: absolute;
@@ -928,7 +922,6 @@
     overflow: hidden;
   }
 
-  /* Gradient border khi hover */
   .link::before {
     content: '';
     position: absolute;
@@ -1205,7 +1198,6 @@
 
   ::selection { background: var(--blue); color: #ffffff; }
 
-  /* Custom scrollbar */
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb {
@@ -1296,7 +1288,7 @@
       </span>
     </h1>
 
-    <div class="handle">@kaivietsub</div>
+    <div class="handle">@kaireviewphim</div>
     <div class="role">Kênh Vietsub &amp; Gaming</div>
   </div>
 
@@ -1311,15 +1303,15 @@
     </div>
     <div class="stat">
       <span class="stat-value" data-count="1500">0</span>
-      <span class="stat-label">Episodes</span>
+      <span class="stat-label">Các tập</span>
     </div>
     <div class="stat">
       <span class="stat-value" data-count="50">0</span>
-      <span class="stat-label">Projects</span>
+      <span class="stat-label">Các dự án</span>
     </div>
     <div class="stat">
       <span class="stat-value" data-count="999">0</span>
-      <span class="stat-label">Followers</span>
+      <span class="stat-label">Theo dõi</span>
     </div>
   </div>
 
@@ -1379,7 +1371,7 @@
       </div>
       <div class="link-body">
         <span class="link-name">Email</span>
-        <span class="link-desc">Hợp tác &amp; quảng cáo</span>
+        <span class="link-desc">Hợp tác &amp; quảng cáo (Chưa Có)</span>
       </div>
       <div class="link-arrow">
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -1395,28 +1387,41 @@
     <span class="skill"><span>Photoshop</span></span>
     <span class="skill"><span>Premiere Pro</span></span>
     <span class="skill"><span>After Effects</span></span>
-    <span class="skill"><span>Japanese N3</span></span>
+    <span class="skill"><span>Chinese HSK 3</span></span>
+    <span class="skill"><span>Gemini AI</span></span>
   </div>
 
   <div class="footer">
-    <span>Made with care</span>
+    <span>© Made with care</span>
     <span class="sep"></span>
     <span>Vietnam</span>
     <span class="sep"></span>
-    <span>2025</span>
+    <span>2026</span>
   </div>
 
 </div>
 
 <script>
   /* =========================================================
-     STATS COUNT UP
+     STATS COUNT UP — CHỈ CHẠY SAU KHI BẤM "VÀO TRANG"
   ========================================================= */
   (function () {
     const els = document.querySelectorAll('[data-count]');
     let started = false;
+
     function ease(t) { return 1 - Math.pow(1 - t, 4); }
+
+    function formatValue(end) {
+      if (end >= 1000) {
+        return (end / 1000).toFixed(1).replace('.0', '') + 'K+';
+      }
+      return end + '+';
+    }
+
     function run() {
+      if (started) return;
+      started = true;
+
       els.forEach((el, i) => {
         const end = +el.dataset.count;
         const dur = 1400 + i * 100;
@@ -1427,22 +1432,21 @@
           el.textContent = v.toLocaleString('en-US');
           if (p < 1) requestAnimationFrame(frame);
           else {
-            el.textContent = end >= 1000
-              ? (end / 1000).toFixed(1).replace('.0', '') + 'K+'
-              : end + '+';
+            el.textContent = formatValue(end);
           }
         })(performance.now());
       });
     }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting && !started) {
-          started = true; run(); io.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    const target = document.querySelector('.stats');
-    if (target) io.observe(target);
+
+    // Chờ cho đến khi overlay entry được ẩn (tức đã bấm "Vào trang")
+    const checkEntry = setInterval(function () {
+      const entry = document.getElementById('entry');
+      if (entry && entry.classList.contains('hidden')) {
+        clearInterval(checkEntry);
+        // Đợi 1 chút cho animation mượt rồi mới đếm
+        setTimeout(run, 500);
+      }
+    }, 100);
   })();
 
   /* =========================================================
