@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KaiVietsub — Bio</title>
+<title>KaiVietsub — Kênh Phụ Đề & Gaming</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f8f9fb;
@@ -24,6 +24,8 @@
     --font: 'Inter', -apple-system, sans-serif;
     --mono: 'JetBrains Mono', monospace;
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -44,13 +46,17 @@
     min-height: 100vh;
     padding: 48px 20px 64px;
     position: relative;
+    overflow-x: hidden;
   }
 
+  /* =========================================================
+     AMBIENT BACKGROUND
+  ========================================================= */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: -2;
     background:
       radial-gradient(circle 500px at 15% 10%, rgba(37, 99, 235, 0.08), transparent 60%),
       radial-gradient(circle 400px at 85% 15%, rgba(236, 72, 153, 0.06), transparent 60%),
@@ -58,15 +64,303 @@
     pointer-events: none;
   }
 
+  /* Fine grid — rất mờ */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black, transparent 90%);
+    pointer-events: none;
+  }
+
+  /* =========================================================
+     ENTRY OVERLAY
+  ========================================================= */
+  .entry {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    cursor: pointer;
+    transition: opacity 0.5s var(--ease), visibility 0.5s var(--ease);
+  }
+
+  .entry.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .entry-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 44px 36px 38px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    box-shadow:
+      0 40px 100px -20px rgba(15, 23, 42, 0.5),
+      0 20px 40px -12px rgba(15, 23, 42, 0.3);
+    animation: entryPop 0.7s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Gradient border — animate */
+  .entry-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2563eb, #8b5cf6, #ec4899, #f59e0b, #10b981, #2563eb);
+    background-size: 300% 100%;
+    animation: gradientFlow 4s linear infinite;
+  }
+
+  @keyframes gradientFlow {
+    to { background-position: 300% 0; }
+  }
+
+  /* Radial glow bên trong */
+  .entry-card::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.08), transparent 65%);
+    pointer-events: none;
+  }
+
+  @keyframes entryPop {
+    from { opacity: 0; transform: scale(0.9) translateY(24px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .entry-icon {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 26px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .entry-icon-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 18px 44px -10px rgba(37, 99, 235, 0.55),
+      inset 0 2px 4px rgba(255, 255, 255, 0.25);
+    position: relative;
+    z-index: 2;
+    animation: iconBounce 2.4s var(--ease) infinite;
+    overflow: hidden;
+  }
+
+  /* Shine effect */
+  .entry-icon-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.4) 50%, transparent 60%);
+    transform: translateX(-100%);
+    animation: shineEffect 3.5s var(--ease) infinite;
+  }
+
+  @keyframes shineEffect {
+    0% { transform: translateX(-100%); }
+    40%, 100% { transform: translateX(100%); }
+  }
+
+  @keyframes iconBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .entry-icon-inner svg {
+    width: 40px;
+    height: 40px;
+    fill: #ffffff;
+    position: relative;
+    z-index: 1;
+  }
+
+  .entry-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid #2563eb;
+    opacity: 0;
+    animation: entryPulse 2.4s var(--ease) infinite;
+  }
+
+  .entry-pulse:nth-child(2) { animation-delay: 0.8s; }
+  .entry-pulse:nth-child(3) { animation-delay: 1.6s; }
+
+  @keyframes entryPulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+
+  .entry-title {
+    font-size: 23px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+  }
+
+  .entry-desc {
+    font-size: 14.5px;
+    color: var(--ink-3);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .entry-song {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--blue);
+    font-weight: 600;
+    margin-bottom: 26px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    background: var(--blue-soft);
+    border-radius: 100px;
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    position: relative;
+    z-index: 1;
+  }
+
+  .entry-song::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 8px var(--blue);
+    animation: songDot 1.4s var(--ease) infinite;
+  }
+
+  @keyframes songDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .entry-btn {
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: all 0.35s var(--ease);
+    box-shadow:
+      0 14px 30px -6px rgba(37, 99, 235, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .entry-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s var(--ease);
+  }
+
+  .entry-btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 20px 40px -6px rgba(37, 99, 235, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .entry-btn:hover::before {
+    transform: translateX(100%);
+  }
+
+  .entry-btn:active {
+    transform: translateY(-1px) scale(0.99);
+  }
+
+  .entry-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    animation: arrowRight 1.6s var(--ease) infinite;
+  }
+
+  @keyframes arrowRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+  }
+
+  .entry-hint {
+    font-size: 11.5px;
+    color: var(--ink-4);
+    margin-top: 16px;
+    font-family: var(--mono);
+    letter-spacing: 0.02em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* =========================================================
+     MUSIC PLAYER
+  ========================================================= */
   .music-player {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 100px;
     padding: 8px 16px 8px 8px;
     display: flex;
@@ -74,22 +368,25 @@
     gap: 12px;
     box-shadow:
       0 1px 3px rgba(15, 23, 42, 0.04),
-      0 12px 32px -8px rgba(15, 23, 42, 0.12);
-    transition: all 0.3s var(--ease);
-    animation: slideInRight 0.6s var(--ease) 0.5s both;
+      0 12px 32px -8px rgba(15, 23, 42, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: all 0.35s var(--ease);
     max-width: calc(100vw - 40px);
+    animation: slideInRight 0.7s var(--ease-out) 0.4s both;
   }
 
   @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(20px); }
+    from { opacity: 0; transform: translateX(30px); }
     to { opacity: 1; transform: translateX(0); }
   }
 
   .music-player:hover {
     box-shadow:
       0 1px 3px rgba(15, 23, 42, 0.04),
-      0 16px 40px -8px rgba(37, 99, 235, 0.2);
+      0 18px 44px -8px rgba(37, 99, 235, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
     border-color: rgba(37, 99, 235, 0.2);
+    transform: translateY(-1px);
   }
 
   .disc {
@@ -127,9 +424,10 @@
   .disc.playing::after {
     inset: 12px;
     background: var(--blue);
+    box-shadow: 0 0 8px var(--blue);
   }
 
-  .disc:hover { transform: scale(1.06); }
+  .disc:hover { transform: scale(1.08); }
   .disc.playing { animation: spinDisc 4s linear infinite; }
 
   @keyframes spinDisc {
@@ -167,10 +465,10 @@
   }
 
   .play-btn {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: var(--blue);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     border: none;
     cursor: pointer;
     display: flex;
@@ -178,13 +476,21 @@
     justify-content: center;
     color: #fff;
     flex-shrink: 0;
-    transition: all 0.25s var(--ease);
-    box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s var(--ease);
+    box-shadow:
+      0 6px 14px -2px rgba(37, 99, 235, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   .play-btn:hover {
-    background: var(--blue-dark);
-    transform: scale(1.08);
+    transform: scale(1.1);
+    box-shadow:
+      0 8px 18px -2px rgba(37, 99, 235, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .play-btn:active {
+    transform: scale(0.96);
   }
 
   .play-btn svg {
@@ -198,7 +504,7 @@
     align-items: center;
     gap: 6px;
     padding-left: 8px;
-    border-left: 1px solid var(--line);
+    border-left: 1px solid rgba(15, 23, 42, 0.08);
   }
 
   .volume-wrap svg {
@@ -231,11 +537,11 @@
     border-radius: 50%;
     background: var(--blue);
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
     transition: transform 0.2s var(--ease);
   }
 
-  .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.25); }
 
   .volume-slider::-moz-range-thumb {
     width: 12px;
@@ -246,22 +552,28 @@
     border: none;
   }
 
+  /* =========================================================
+     BIO
+  ========================================================= */
   .bio {
     max-width: 480px;
     margin: 0 auto;
-    animation: enter 0.8s var(--ease);
+    animation: enter 0.9s var(--ease-out);
   }
 
   @keyframes enter {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* =========================================================
+     MAIN CARD
+  ========================================================= */
   .card {
     background: var(--bg-2);
     border: 1px solid var(--line);
-    border-radius: 24px;
-    padding: 32px 28px 28px;
+    border-radius: 26px;
+    padding: 36px 30px 30px;
     text-align: center;
     box-shadow:
       0 1px 3px rgba(15, 23, 42, 0.04),
@@ -269,8 +581,16 @@
     position: relative;
     overflow: hidden;
     margin-bottom: 14px;
+    transition: box-shadow 0.4s var(--ease);
   }
 
+  .card:hover {
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.04),
+      0 20px 44px -8px rgba(15, 23, 42, 0.12);
+  }
+
+  /* Gradient border top — animate */
   .card::before {
     content: '';
     position: absolute;
@@ -278,57 +598,91 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #2563eb, #8b5cf6, #ec4899, #f59e0b, #10b981);
+    background: linear-gradient(90deg, #2563eb, #8b5cf6, #ec4899, #f59e0b, #10b981, #2563eb);
+    background-size: 300% 100%;
+    animation: gradientFlow 5s linear infinite;
   }
 
+  /* Radial glow */
+  .card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.05), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* =========================================================
+     AVATAR
+  ========================================================= */
   .avatar {
-    width: 96px;
-    height: 96px;
-    margin: 0 auto 18px;
+    width: 124px;
+    height: 124px;
+    margin: 0 auto 20px;
     position: relative;
     display: block;
+    z-index: 1;
   }
 
   .avatar-inner {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 42px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: -0.04em;
     position: relative;
     z-index: 1;
+    overflow: hidden;
     box-shadow:
-      0 12px 32px -8px rgba(37, 99, 235, 0.4),
+      0 16px 40px -10px rgba(220, 38, 38, 0.28),
+      0 4px 12px -4px rgba(15, 23, 42, 0.08),
       0 0 0 6px #ffffff,
       0 0 0 8px var(--line);
-    transition: transform 0.4s var(--ease);
+    transition: transform 0.5s var(--ease-bounce), box-shadow 0.4s var(--ease);
   }
 
-  .avatar:hover .avatar-inner { transform: scale(1.05) rotate(-4deg); }
+  .avatar-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .avatar:hover .avatar-inner {
+    transform: scale(1.06) rotate(-3deg);
+    box-shadow:
+      0 20px 48px -10px rgba(220, 38, 38, 0.4),
+      0 6px 16px -4px rgba(15, 23, 42, 0.15),
+      0 0 0 6px #ffffff,
+      0 0 0 8px var(--line);
+  }
 
   .avatar-online {
     position: absolute;
-    bottom: 4px;
-    right: 4px;
-    width: 20px;
-    height: 20px;
+    bottom: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
     background: var(--green);
     border-radius: 50%;
-    border: 3px solid #ffffff;
+    border: 3.5px solid #ffffff;
     z-index: 2;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    box-shadow:
+      0 0 0 2px rgba(16, 185, 129, 0.15),
+      0 4px 8px rgba(16, 185, 129, 0.3);
   }
 
   .avatar-online::after {
     content: '';
     position: absolute;
-    inset: -3px;
+    inset: -4px;
     border-radius: 50%;
     border: 2px solid var(--green);
     opacity: 0;
@@ -337,38 +691,49 @@
 
   @keyframes ping {
     0% { transform: scale(0.85); opacity: 0.9; }
-    100% { transform: scale(1.8); opacity: 0; }
+    100% { transform: scale(2); opacity: 0; }
   }
 
+  /* =========================================================
+     NAME
+  ========================================================= */
   .name {
-    font-size: 26px;
+    font-size: 27px;
     font-weight: 800;
     color: var(--ink);
     letter-spacing: -0.03em;
     line-height: 1.15;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    position: relative;
+    z-index: 1;
   }
 
   .verified {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
-    background: var(--blue);
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     border-radius: 50%;
     color: #ffffff;
     flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 3px 8px rgba(37, 99, 235, 0.4);
+    animation: verifiedPop 3s var(--ease) infinite;
+  }
+
+  @keyframes verifiedPop {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
   }
 
   .verified svg {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
     stroke: currentColor;
     stroke-width: 3.5;
     fill: none;
@@ -379,23 +744,34 @@
   .handle {
     font-family: var(--mono);
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--blue);
     letter-spacing: -0.01em;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
   }
 
   .role {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--blue-dark);
-    padding: 6px 14px;
+    padding: 7px 16px;
     background: var(--blue-soft);
     border-radius: 100px;
-    border: 1px solid rgba(37, 99, 235, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s var(--ease);
+  }
+
+  .role:hover {
+    background: rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
   }
 
   .role::before {
@@ -404,25 +780,57 @@
     height: 6px;
     background: var(--blue);
     border-radius: 50%;
-    box-shadow: 0 0 6px rgba(37, 99, 235, 0.6);
+    box-shadow: 0 0 8px var(--blue);
+    animation: roleDot 2s var(--ease) infinite;
   }
 
+  @keyframes roleDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  /* =========================================================
+     BIO TEXT
+  ========================================================= */
   .bio-text {
     background: var(--bg-2);
     border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 22px 24px;
+    border-radius: 20px;
+    padding: 24px 26px;
     margin-bottom: 14px;
     font-size: 14.5px;
-    line-height: 1.7;
+    line-height: 1.75;
     color: var(--ink-2);
     text-align: center;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.03),
+      0 4px 12px -4px rgba(15, 23, 42, 0.04);
+    transition: all 0.3s var(--ease);
   }
 
-  .bio-text strong { color: var(--ink); font-weight: 700; }
-  .bio-text em { color: var(--blue); font-style: italic; font-weight: 600; }
+  .bio-text:hover {
+    border-color: var(--line-2);
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.03),
+      0 8px 20px -6px rgba(15, 23, 42, 0.08);
+  }
 
+  .bio-text strong {
+    color: var(--ink);
+    font-weight: 700;
+    background: linear-gradient(180deg, transparent 60%, rgba(37, 99, 235, 0.15) 60%);
+    padding: 0 2px;
+  }
+
+  .bio-text em {
+    color: var(--blue);
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  /* =========================================================
+     STATS
+  ========================================================= */
   .stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -434,29 +842,52 @@
     background: var(--bg-2);
     border: 1px solid var(--line);
     border-radius: 16px;
-    padding: 16px 8px;
+    padding: 18px 8px 16px;
     text-align: center;
-    transition: all 0.25s var(--ease);
+    transition: all 0.35s var(--ease);
     cursor: default;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.03),
+      0 2px 6px -2px rgba(15, 23, 42, 0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.4s var(--ease);
+  }
+
+  .stat:hover::before {
+    transform: scaleX(1);
   }
 
   .stat:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     border-color: rgba(37, 99, 235, 0.3);
-    box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.15);
+    box-shadow:
+      0 12px 24px -6px rgba(37, 99, 235, 0.18),
+      0 4px 8px -4px rgba(37, 99, 235, 0.1);
   }
 
   .stat-value {
-    font-size: 22px;
+    font-size: 23px;
     font-weight: 800;
     color: var(--ink);
-    letter-spacing: -0.035em;
+    letter-spacing: -0.04em;
     line-height: 1.1;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     font-variant-numeric: tabular-nums;
-    transition: color 0.25s var(--ease);
+    transition: color 0.3s var(--ease);
   }
 
   .stat:hover .stat-value { color: var(--blue); }
@@ -464,52 +895,101 @@
   .stat-label {
     font-family: var(--mono);
     font-size: 9.5px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--ink-4);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
-  .links { display: flex; flex-direction: column; gap: 10px; }
+  /* =========================================================
+     LINKS
+  ========================================================= */
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
 
   .link {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 18px;
+    gap: 15px;
+    padding: 15px 19px;
     background: var(--bg-2);
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: 17px;
     text-decoration: none;
     color: inherit;
-    transition: all 0.25s var(--ease);
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    transition: all 0.35s var(--ease);
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.03),
+      0 2px 6px -2px rgba(15, 23, 42, 0.04);
     position: relative;
     overflow: hidden;
   }
 
+  /* Gradient border khi hover */
+  .link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 17px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.4), rgba(124, 58, 237, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s var(--ease);
+    pointer-events: none;
+  }
+
+  .link:hover::before {
+    opacity: 1;
+  }
+
   .link:hover {
-    transform: translateY(-2px);
-    border-color: rgba(37, 99, 235, 0.25);
-    box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.12);
+    transform: translateY(-3px);
+    box-shadow:
+      0 14px 28px -8px rgba(15, 23, 42, 0.15),
+      0 4px 8px -2px rgba(15, 23, 42, 0.06);
   }
 
   .link-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     color: #ffffff;
-    transition: transform 0.3s var(--ease);
-    box-shadow: 0 4px 10px -2px rgba(15, 23, 42, 0.15);
+    transition: transform 0.4s var(--ease-bounce);
+    box-shadow:
+      0 6px 14px -2px rgba(15, 23, 42, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
   }
 
-  .link:hover .link-icon { transform: scale(1.08) rotate(-4deg); }
+  .link-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.6s var(--ease);
+  }
 
-  .link-icon svg { width: 20px; height: 20px; fill: currentColor; }
+  .link:hover .link-icon {
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  .link:hover .link-icon::before {
+    transform: translateX(100%);
+  }
+
+  .link-icon svg { width: 21px; height: 21px; fill: currentColor; }
 
   .link-icon svg.stroke {
     fill: none;
@@ -519,10 +999,22 @@
     stroke-linejoin: round;
   }
 
-  .link-icon.youtube { background: linear-gradient(135deg, #ff0000, #cc0000); }
-  .link-icon.facebook { background: linear-gradient(135deg, #1877f2, #0a58c9); }
-  .link-icon.tiktok { background: linear-gradient(135deg, #0a0a0a, #25f4ee); }
-  .link-icon.email { background: linear-gradient(135deg, #2563eb, #7c3aed); }
+  .link-icon.youtube {
+    background: linear-gradient(135deg, #ff0000, #cc0000);
+    box-shadow: 0 6px 14px -2px rgba(255, 0, 0, 0.35);
+  }
+  .link-icon.facebook {
+    background: linear-gradient(135deg, #1877f2, #0a58c9);
+    box-shadow: 0 6px 14px -2px rgba(24, 119, 242, 0.35);
+  }
+  .link-icon.tiktok {
+    background: linear-gradient(135deg, #0a0a0a, #25f4ee);
+    box-shadow: 0 6px 14px -2px rgba(37, 244, 238, 0.3);
+  }
+  .link-icon.email {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 6px 14px -2px rgba(37, 99, 235, 0.35);
+  }
 
   .link-body { flex: 1; min-width: 0; }
 
@@ -533,7 +1025,12 @@
     letter-spacing: -0.015em;
     line-height: 1.3;
     display: block;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    transition: color 0.3s var(--ease);
+  }
+
+  .link:hover .link-name {
+    color: var(--blue);
   }
 
   .link-desc {
@@ -549,7 +1046,11 @@
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    transition: all 0.3s var(--ease);
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: all 0.35s var(--ease);
   }
 
   .link-arrow svg {
@@ -562,14 +1063,21 @@
     stroke-linejoin: round;
   }
 
-  .link:hover .link-arrow { color: var(--blue); transform: translateX(4px); }
+  .link:hover .link-arrow {
+    color: var(--blue);
+    background: var(--blue-soft);
+    transform: translateX(4px);
+  }
 
+  /* =========================================================
+     SKILLS
+  ========================================================= */
   .skills {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 7px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 22px;
     padding: 0 8px;
   }
 
@@ -577,26 +1085,53 @@
     font-size: 12px;
     font-weight: 600;
     color: var(--ink-2);
-    padding: 6px 13px;
+    padding: 7px 14px;
     background: var(--bg-2);
     border: 1px solid var(--line);
     border-radius: 100px;
     letter-spacing: -0.005em;
-    transition: all 0.2s var(--ease);
+    transition: all 0.3s var(--ease);
     cursor: default;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.03),
+      0 1px 3px -1px rgba(15, 23, 42, 0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.06));
+    opacity: 0;
+    transition: opacity 0.3s var(--ease);
   }
 
   .skill:hover {
     color: var(--blue);
-    background: var(--blue-soft);
-    border-color: rgba(37, 99, 235, 0.25);
-    transform: translateY(-1px);
+    border-color: rgba(37, 99, 235, 0.3);
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 16px -4px rgba(37, 99, 235, 0.2),
+      0 2px 4px -2px rgba(37, 99, 235, 0.1);
   }
 
+  .skill:hover::before {
+    opacity: 1;
+  }
+
+  .skill span {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* =========================================================
+     FOOTER
+  ========================================================= */
   .footer {
     text-align: center;
-    margin-top: 28px;
+    margin-top: 30px;
     font-family: var(--mono);
     font-size: 11px;
     color: var(--ink-4);
@@ -604,7 +1139,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 11px;
     flex-wrap: wrap;
   }
 
@@ -613,9 +1148,12 @@
     height: 3px;
     border-radius: 50%;
     background: var(--ink-4);
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
+  /* =========================================================
+     RESPONSIVE
+  ========================================================= */
   @media (max-width: 640px) {
     .music-player {
       top: 12px;
@@ -630,28 +1168,87 @@
 
   @media (max-width: 480px) {
     body { padding: 88px 16px 48px; }
-    .card { padding: 28px 22px 24px; border-radius: 22px; }
-    .avatar { width: 84px; height: 84px; }
-    .avatar-inner { font-size: 36px; }
+
+    .card { padding: 30px 22px 24px; border-radius: 22px; }
+    .avatar { width: 106px; height: 106px; }
+    .avatar-inner {
+      box-shadow:
+        0 12px 32px -8px rgba(220, 38, 38, 0.25),
+        0 0 0 5px #ffffff,
+        0 0 0 7px var(--line);
+    }
     .name { font-size: 22px; }
-    .bio-text { padding: 18px 20px; font-size: 14px; border-radius: 16px; }
+    .verified { width: 20px; height: 20px; }
+    .bio-text { padding: 20px 22px; font-size: 14px; border-radius: 18px; }
     .stats { gap: 8px; }
-    .stat { padding: 12px 6px; border-radius: 14px; }
-    .stat-value { font-size: 18px; }
-    .stat-label { font-size: 9px; }
-    .link { padding: 12px 14px; gap: 12px; border-radius: 14px; }
-    .link-icon { width: 38px; height: 38px; border-radius: 10px; }
-    .link-icon svg { width: 18px; height: 18px; }
+    .stat { padding: 14px 6px 12px; border-radius: 14px; }
+    .stat-value { font-size: 19px; }
+    .stat-label { font-size: 9px; letter-spacing: 0.08em; }
+    .link { padding: 13px 15px; gap: 13px; border-radius: 15px; }
+    .link-icon { width: 40px; height: 40px; border-radius: 11px; }
+    .link-icon svg { width: 19px; height: 19px; }
     .link-name { font-size: 13.5px; }
     .link-desc { font-size: 11.5px; }
+    .link-arrow { width: 28px; height: 28px; }
     .music-info { display: none; }
     .disc { width: 32px; height: 32px; }
+    .play-btn { width: 28px; height: 28px; }
+
+    .entry-card { padding: 38px 26px 32px; border-radius: 24px; }
+    .entry-icon { width: 82px; height: 82px; margin-bottom: 22px; }
+    .entry-icon-inner svg { width: 34px; height: 34px; }
+    .entry-title { font-size: 19px; }
+    .entry-desc { font-size: 13.5px; }
+    .entry-btn { padding: 15px 20px; font-size: 14px; }
+    .entry-hint { font-size: 11px; }
   }
 
   ::selection { background: var(--blue); color: #ffffff; }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-2);
+    border-radius: 10px;
+    border: 2px solid var(--bg);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
 </style>
 </head>
 <body>
+
+<!-- =========================================================
+     ENTRY OVERLAY
+========================================================= -->
+<div class="entry" id="entry">
+  <div class="entry-card" onclick="event.stopPropagation()">
+    <div class="entry-icon">
+      <span class="entry-pulse"></span>
+      <span class="entry-pulse"></span>
+      <span class="entry-pulse"></span>
+      <div class="entry-icon-inner">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </div>
+
+    <h2 class="entry-title">Chào mừng đến KaiVietsub</h2>
+    <p class="entry-desc">Bấm vào nút bên dưới để vào trang và thưởng thức âm nhạc</p>
+
+    <div class="entry-song">Người Dưng Remix — Jack J97 x Ness</div>
+
+    <button class="entry-btn" id="entryBtn">
+      Vào trang
+      <svg viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+
+    <p class="entry-hint">♪ Nhạc sẽ tự động phát sau khi bấm</p>
+  </div>
+</div>
 
 <!-- ==================== MUSIC PLAYER ==================== -->
 <div class="music-player">
@@ -673,12 +1270,9 @@
   </div>
 </div>
 
-<!-- ==================== AUDIO — 2 nguồn fallback ==================== -->
-<audio id="bgMusic" preload="auto" loop playsinline crossorigin="anonymous">
-  <!-- Nguồn 1: jsDelivr CDN (nhanh nhất) -->
+<!-- ==================== AUDIO ==================== -->
+<audio id="bgMusic" preload="auto" loop playsinline>
   <source src="https://cdn.jsdelivr.net/gh/baoan0911101-cloud/nhac-nguoi-dung@main/Ng%C6%B0%E1%BB%9Di%20D%C6%B0ng%20Remix%20(B%E1%BA%A3n%20Tiktok)%20-%20JACK%20-%20J97%20x%20Ness%20-%20Ng%C3%A0y%20M%C3%A0%20Em%20%C4%90i%20Con%20Thuy%E1%BB%81n%20Kia%20L%E1%BA%B7ng%20Nh%C3%ACn%20Kh%E1%BA%BD%20Tr%C3%B4i.mp3" type="audio/mpeg">
-  
-  <!-- Nguồn 2: GitHub Raw (dự phòng) -->
   <source src="https://raw.githubusercontent.com/baoan0911101-cloud/nhac-nguoi-dung/main/Ng%C6%B0%E1%BB%9Di%20D%C6%B0ng%20Remix%20(B%E1%BA%A3n%20Tiktok)%20-%20JACK%20-%20J97%20x%20Ness%20-%20Ng%C3%A0y%20M%C3%A0%20Em%20%C4%90i%20Con%20Thuy%E1%BB%81n%20Kia%20L%E1%BA%B7ng%20Nh%C3%ACn%20Kh%E1%BA%BD%20Tr%C3%B4i.mp3" type="audio/mpeg">
 </audio>
 
@@ -687,7 +1281,9 @@
 
   <div class="card">
     <div class="avatar">
-      <div class="avatar-inner">K</div>
+      <div class="avatar-inner">
+        <img src="https://cdn.discordapp.com/attachments/1425463037250502691/1547610832437907466/11zon_cropped.png?ex=6aa40c67&is=6aa2bae7&hm=fac69e9c2f082585df0a2ae53644636fba98d5d6f8079029f959fff7fb69bbf5&" alt="KaiVietsub Logo" id="avatarLogo">
+      </div>
       <div class="avatar-online"></div>
     </div>
 
@@ -701,7 +1297,7 @@
     </h1>
 
     <div class="handle">@kaivietsub</div>
-    <div class="role">Subtitle Creator</div>
+    <div class="role">Kênh Phụ Đề &amp; Gaming</div>
   </div>
 
   <div class="bio-text">
@@ -729,7 +1325,7 @@
 
   <div class="links">
 
-    <a href="https://youtube.com/@KaiVietsub" target="_blank" rel="noopener" class="link">
+    <a href="https://www.youtube.com/@Kaireviewphim1" target="_blank" rel="noopener" class="link">
       <div class="link-icon youtube">
         <svg viewBox="0 0 24 24">
           <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -737,14 +1333,14 @@
       </div>
       <div class="link-body">
         <span class="link-name">YouTube</span>
-        <span class="link-desc">Kênh sub anime chính thức</span>
+        <span class="link-desc">Kênh Vietsub chính thức</span>
       </div>
       <div class="link-arrow">
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </div>
     </a>
 
-    <a href="https://facebook.com/KaiVietsub" target="_blank" rel="noopener" class="link">
+    <a href="https://web.facebook.com/profile.php?id=61593912640666" target="_blank" rel="noopener" class="link">
       <div class="link-icon facebook">
         <svg viewBox="0 0 24 24">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -759,7 +1355,7 @@
       </div>
     </a>
 
-    <a href="https://tiktok.com/@KaiVietsub" target="_blank" rel="noopener" class="link">
+    <a href="https://www.tiktok.com/@kaireviewphim" target="_blank" rel="noopener" class="link">
       <div class="link-icon tiktok">
         <svg viewBox="0 0 24 24">
           <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
@@ -793,13 +1389,13 @@
   </div>
 
   <div class="skills">
-    <span class="skill">Aegisub</span>
-    <span class="skill">Subtitle Edit</span>
-    <span class="skill">FFmpeg</span>
-    <span class="skill">Photoshop</span>
-    <span class="skill">Premiere Pro</span>
-    <span class="skill">After Effects</span>
-    <span class="skill">Japanese N3</span>
+    <span class="skill"><span>Aegisub</span></span>
+    <span class="skill"><span>Subtitle Edit</span></span>
+    <span class="skill"><span>FFmpeg</span></span>
+    <span class="skill"><span>Photoshop</span></span>
+    <span class="skill"><span>Premiere Pro</span></span>
+    <span class="skill"><span>After Effects</span></span>
+    <span class="skill"><span>Japanese N3</span></span>
   </div>
 
   <div class="footer">
@@ -850,7 +1446,7 @@
   })();
 
   /* =========================================================
-     AUTOPLAY NHẠC — TRUE AUTOPLAY
+     ENTRY OVERLAY + MUSIC PLAYER
   ========================================================= */
   (function () {
     const audio = document.getElementById('bgMusic');
@@ -858,6 +1454,8 @@
     const playIcon = document.getElementById('playIcon');
     const disc = document.getElementById('disc');
     const volumeSlider = document.getElementById('volumeSlider');
+    const entry = document.getElementById('entry');
+    const entryBtn = document.getElementById('entryBtn');
 
     if (!audio) return;
 
@@ -874,25 +1472,6 @@
       }
     }
 
-    function autoPlayMusic() {
-      audio.muted = true;
-      audio.volume = 0;
-
-      const promise = audio.play();
-
-      if (promise !== undefined) {
-        promise.then(() => {
-          setTimeout(() => {
-            audio.muted = false;
-            fadeVolume(0, 0.6, 800);
-            updateUI(true);
-          }, 100);
-        }).catch(() => {
-          bindFallback();
-        });
-      }
-    }
-
     function fadeVolume(from, to, duration) {
       const start = performance.now();
       const diff = to - from;
@@ -904,28 +1483,44 @@
       requestAnimationFrame(step);
     }
 
-    function bindFallback() {
-      let triggered = false;
-      function trigger() {
-        if (triggered) return;
-        triggered = true;
-        audio.muted = false;
-        audio.volume = 0;
-        audio.play().then(() => {
-          fadeVolume(0, 0.6, 600);
+    function enterAndPlay() {
+      entry.classList.add('hidden');
+
+      audio.muted = false;
+      audio.volume = 0;
+
+      const promise = audio.play();
+
+      if (promise !== undefined) {
+        promise.then(() => {
+          fadeVolume(0, 0.6, 1000);
           updateUI(true);
-        }).catch(() => {});
+        }).catch((err) => {
+          console.log('Play failed:', err);
+          audio.muted = true;
+          audio.play().then(() => {
+            setTimeout(() => {
+              audio.muted = false;
+              fadeVolume(0, 0.6, 800);
+            }, 100);
+          }).catch(() => {});
+        });
       }
-      ['click', 'touchstart', 'keydown', 'scroll', 'mousemove', 'pointerdown'].forEach(evt => {
-        document.addEventListener(evt, trigger, { once: true, passive: true });
-      });
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', autoPlayMusic);
-    } else {
-      autoPlayMusic();
-    }
+    entryBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      enterAndPlay();
+    });
+
+    entry.addEventListener('click', enterAndPlay);
+
+    document.addEventListener('keydown', (e) => {
+      if (!entry.classList.contains('hidden') && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        enterAndPlay();
+      }
+    });
 
     function togglePlay() {
       if (audio.paused) {
