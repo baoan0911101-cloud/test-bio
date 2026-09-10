@@ -1198,21 +1198,51 @@
   /* =========================================================
      RESPONSIVE
   ========================================================= */
+  /* --- Mobile: player xuống DƯỚI CÙNG, thu hẹp, căn giữa --- */
   @media (max-width: 640px) {
     .music-player {
-      top: 12px;
-      right: 12px;
-      left: 12px;
-      max-width: none;
-      justify-content: flex-start;
+      top: auto;
+      bottom: 12px;
+      right: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: calc(100vw - 16px);
+      width: auto;
+      padding: 7px 12px 7px 7px;
+      gap: 8px;
+      justify-content: center;
+      animation: slideInUp 0.7s var(--ease-out) 0.4s both;
     }
-    .volume-wrap { margin-left: auto; }
-    .volume-slider { width: 70px; }
-    .volume-slider::-webkit-slider-thumb { width: 18px; height: 18px; }
+    .music-player:hover,
+    .music-player:active {
+      transform: translateX(-50%) translateY(-1px);
+    }
+
+    .volume-wrap {
+      padding-left: 6px;
+      gap: 4px;
+    }
+    .volume-wrap svg {
+      width: 13px;
+      height: 13px;
+    }
+    .volume-slider { width: 50px; }
+    .volume-slider::-webkit-slider-thumb { width: 15px; height: 15px; }
+
+    .music-title { max-width: 100px; font-size: 11.5px; }
+    .music-artist { max-width: 100px; font-size: 10px; }
+
+    /* Chừa khoảng trống dưới cùng để player không che nội dung cuối */
+    body { padding-bottom: 100px; }
+  }
+
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
   }
 
   @media (max-width: 480px) {
-    body { padding: 88px 16px 48px; }
+    body { padding: 88px 16px 100px; }
 
     .card { padding: 30px 22px 24px; border-radius: 22px; }
     .avatar { width: 106px; height: 106px; }
@@ -1235,9 +1265,12 @@
     .link-name { font-size: 13.5px; }
     .link-desc { font-size: 11.5px; }
     .link-arrow { width: 28px; height: 28px; }
-    .music-info { display: none; }
     .disc { width: 32px; height: 32px; }
     .play-btn { width: 28px; height: 28px; }
+
+    /* KHÔNG ẩn .music-info nữa — giữ chữ hiện đầy đủ */
+    .music-title { max-width: 90px; font-size: 11px; }
+    .music-artist { max-width: 90px; font-size: 9.5px; }
 
     .entry-card { padding: 38px 26px 32px; border-radius: 24px; }
     .entry-icon { width: 82px; height: 82px; margin-bottom: 22px; }
@@ -1246,6 +1279,14 @@
     .entry-desc { font-size: 13.5px; }
     .entry-btn { padding: 15px 20px; font-size: 14px; }
     .entry-hint { font-size: 11px; }
+  }
+
+  /* Màn hình rất nhỏ (iPhone SE 320px) — thu nhỏ thêm */
+  @media (max-width: 380px) {
+    .music-title { max-width: 70px; font-size: 10.5px; }
+    .music-artist { max-width: 70px; font-size: 9px; }
+    .volume-slider { width: 42px; }
+    .music-player { gap: 6px; padding: 6px 10px 6px 6px; }
   }
 
   ::selection { background: var(--blue); color: #ffffff; }
@@ -1423,7 +1464,7 @@
       </div>
       <div class="link-body">
         <span class="link-name">Email</span>
-        <span class="link-desc">Hợp tác &amp; quảng cáo</span>
+        <span class="link-desc">Hợp tác &amp; quảng cáo (Chưa Có)</span>
       </div>
       <div class="link-arrow">
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -1439,15 +1480,16 @@
     <span class="skill"><span>Photoshop</span></span>
     <span class="skill"><span>Premiere Pro</span></span>
     <span class="skill"><span>After Effects</span></span>
-    <span class="skill"><span>Japanese N3</span></span>
+    <span class="skill"><span>Chinese HSK 3</span></span>
+    <span class="skill"><span>Gemini AI</span></span>
   </div>
 
   <div class="footer">
-    <span>Made with care</span>
+    <span>© Made with care</span>
     <span class="sep"></span>
     <span>Vietnam</span>
     <span class="sep"></span>
-    <span>2025</span>
+    <span>2026</span>
   </div>
 
 </div>
@@ -1656,7 +1698,6 @@
 
   /* =========================================================
      MOBILE TOUCH-HOVER — NÚT NỔI LÊN KHI DI TAY TỚI
-     (Vì trên mobile không có "hover" thật, ta tự giả lập)
   ========================================================= */
   (function () {
     if (!IS_TOUCH) return;
@@ -1667,14 +1708,12 @@
       hoverables.forEach(function (el) { el.classList.remove('touch-hover'); });
     }
 
-    // Khi ngón tay di chuyển → tìm element dưới ngón tay → bật class
     document.addEventListener('touchmove', function (e) {
       const t = e.touches[0];
       if (!t) return;
       const el = document.elementFromPoint(t.clientX, t.clientY);
       if (!el) { clearAll(); return; }
 
-      // Tìm element hoverable gần nhất
       let target = null;
       hoverables.forEach(function (h) {
         if (h === el || h.contains(el)) target = h;
@@ -1690,7 +1729,6 @@
       }
     }, { passive: true });
 
-    // Nhấc tay → xóa hết
     document.addEventListener('touchend', function () {
       setTimeout(clearAll, 250);
     });
